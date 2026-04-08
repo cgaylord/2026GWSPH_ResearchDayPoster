@@ -1,0 +1,274 @@
+\documentclass[final]{beamer}
+
+\usepackage[size=custom, width=106.68, height=106.68, scale=1.4]{beamerposter}
+% 42in = 106.68cm
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{tcolorbox}
+\usetikzlibrary{calc}
+
+%% ── GW brand colors ──────────────────────────────────────────
+\definecolor{gwblue}{RGB}{0,59,92}
+\definecolor{gwbuff}{RGB}{168,153,104}
+\definecolor{gwcyan}{RGB}{0,151,215}
+\definecolor{gwlightbg}{RGB}{237,229,210}   % gwbuff!35!white approx
+
+%% ── Beamer theme: stripped down ──────────────────────────────
+\usetheme{default}
+\usecolortheme{default}
+\setbeamercolor{background canvas}{bg=gwlightbg}
+\setbeamertemplate{navigation symbols}{}
+
+%% ── tcolorbox block style ────────────────────────────────────
+\tcbuselibrary{skins}
+
+\newenvironment{posterblock}[2][gwcyan]{%
+  % #1 = header bg color, #2 = title
+  \begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=#1,
+    colbacktitle=#1,
+    coltitle=white,
+    fonttitle=\bfseries\large,
+    title={#2},
+    arc=4pt,
+    boxrule=1.5pt,
+    titlerule=0pt,
+    top=6pt, bottom=6pt, left=8pt, right=8pt,
+    toptitle=4pt, bottomtitle=4pt,
+  ]
+}{%
+  \end{tcolorbox}
+}
+
+\DeclareMathOperator{\arctanh}{arctanh}
+
+\begin{document}
+\begin{frame}[t]{}
+
+\begin{tikzpicture}[remember picture, overlay,
+    every node/.style={inner sep=0, outer sep=0}]
+
+  \coordinate (TL) at (current page.north west);
+
+  %% ============================================================
+  %% HEADER BAR
+  %% ============================================================
+  \fill[gwblue] (TL) rectangle ++(106.68cm, -14cm);
+
+  % GWSPH Research Day logo — top left
+  \node[anchor=north west]
+    at ($(TL)+(1.5cm,-1.2cm)$) {
+      \includegraphics[height=8cm]{../figures/gwsph_research_day_logo.png}
+    };
+
+  % GW | Public Health logo — top right
+  \node[anchor=north east]
+    at ($(TL)+(105.5cm,-1.2cm)$) {
+      \includegraphics[height=10cm]{../figures/gw_public_health_logo.png}
+    };
+
+  % Title centered between logos
+  \node[anchor=north, text width=68cm, align=center]
+    at ($(TL)+(53.34cm,-0.6cm)$) {
+      {\color{white}\fontsize{48}{56}\bfseries\selectfont
+       \\ Computational Pipeline Choice Drives Shotgun-Amplicon\\[0.2ex]
+       Discordance in Microbial Community Profiling:\\[0.2ex]
+       A Fisher-Rao Distance Approach}\\[0.8ex]
+      {\color{gwbuff!80!white}\fontsize{40}{42}\bfseries\selectfont
+       Clark Gaylord \quad Marcos P\'{e}rez-Losada \quad Keith A.\ Crandall}\\[0.4ex]
+      {\color{white!70!gwblue}\fontsize{36}{32}\selectfont
+       Dept.\ of Biostatistics \& Bioinformatics and Computational Biology Institute \\
+       GWSPH Research Day, April 15, 2026}
+    };
+
+  %% ============================================================
+  %% ROW 1
+  %% ============================================================
+
+  \node[anchor=north west] at ($(TL)+(1.5cm,-14.8cm)$) {
+    \begin{minipage}{56cm}
+    \begin{posterblock}{Background \& Objectives}
+      Shotgun metagenomics and amplicon sequencing frequently yield
+      discordant community profiles, commonly attributed to biological
+      or wet-lab differences --- but how much arises from
+      \textsl{computational pipeline} choices?
+
+      \medskip
+      We isolate the dry-lab contribution by routing shotgun data
+      through the amplicon pipeline, holding wet-lab inputs constant.
+      We ask whether Fisher-Rao distance detects pipeline-driven
+      differences more reliably than Bray-Curtis.
+
+      \medskip
+      \textbf{Dataset:} P\'{e}rez-Losada et al.\ (2022) vermicomposting;
+      12 microcosms, $2\times2$ factorial (earthworm $\times$ time);
+      3 replicates per cell. 554 ASVs; 99.1\% phylum assignment (SILVA 138.1).
+
+      \medskip
+      \begin{center}
+      \includegraphics[width=0.95\linewidth]{../figures/pipeline_poster.pdf}
+      \end{center}
+
+      \smallskip
+      {\small
+      \textbf{\color[RGB]{70,110,150}Stream 1 --- Native Amplicon:}
+      16S V4 PCR $\to$ Illumina $\to$ DADA2.\\[0.3ex]
+      \textbf{\color[RGB]{140,90,156}Stream 2 --- MEGAHIT Contigs:}
+      Shotgun $\to$ MEGAHIT $\to$ Barrnap $\to$ BBMap $\to$ DADA2.\\[0.3ex]
+      \textbf{\color[RGB]{60,140,90}Stream 3 --- Read-Based:}
+      Shotgun reads extracted and routed through amplicon DADA2.\\[0.3ex]
+      Streams 2 \& 3 share identical wet-lab inputs, isolating
+      computational pipeline as the variable of interest.}
+    \end{posterblock}
+    \end{minipage}
+  };
+
+  \node[anchor=north west] at ($(TL)+(59cm,-14.8cm)$) {
+    \begin{minipage}{46.2cm}
+    \begin{posterblock}{PCoA Ordination by Treatment $\times$ Time}
+      \begin{center}
+      \includegraphics[width=0.97\linewidth]{../figures/pcoa_permanova_phylum.pdf}
+      \end{center}
+      \begin{center}
+      {\small Fisher-Rao (left) and Bray-Curtis (right) for
+      Amplicon and MEGAHIT Contigs. Treatment and time structure
+      visible under both; Fisher-Rao gives tighter clustering.}
+      \end{center}
+    \end{posterblock}
+    \end{minipage}
+  };
+
+  %% ============================================================
+  %% ROW 2
+  %% ============================================================
+
+  \node[anchor=north west] at ($(TL)+(1.5cm,-48.1cm)$) {
+    \begin{minipage}{56cm}
+    \begin{posterblock}{Phylum-Level Composition by Treatment $\times$ Time}
+      \begin{center}
+      \includegraphics[width=0.95\linewidth]{../figures/three_stream_experimental_design_barplot.pdf}
+      \end{center}
+      \begin{center}
+      {\small Rows: analytical stream. Columns: experimental group
+      (CT/EW $\times$ Day~21/63), 3 replicates per cell.
+      Amplicon and MEGAHIT Contigs show concordant treatment response;
+      Read-Based diverges ($<$0.1\% of shotgun reads match V4).
+      FR distances below quantify the difference.}
+      \end{center}
+    \end{posterblock}
+    \end{minipage}
+  };
+
+  \node[anchor=north west] at ($(TL)+(59cm,-53cm)$) {
+    \begin{minipage}{46.18cm}
+    \begin{posterblock}{Pairwise Distances: Fisher-Rao vs.\ Bray-Curtis}
+      \begin{center}
+      \includegraphics[width=0.97\linewidth]{../figures/pairwise_distances_boxplot.pdf}
+      \end{center}
+      \begin{center}
+      {\small FR confirms concordance ($\bar{d}=0.693$) and divergence
+      ($3\times$ larger for Read-Based), with lower variance than
+      BC (CV ratio $\approx 0.44$) --- consistent with the composition above.}
+      \end{center}
+    \end{posterblock}
+    \end{minipage}
+  };
+
+  %% ============================================================
+  %% ROW 3
+  %% ============================================================
+
+  \node[anchor=north west] at ($(TL)+(1.5cm,-90.2cm)$) {
+    \begin{minipage}{56cm}
+    \begin{posterblock}{Fisher-Rao Distance \& PERMANOVA Results}
+
+      \small
+      Fisher-Rao distance arises necessarily from the Fisher
+      Information Matrix and is the \textsl{unique} metric on the
+      probability simplex invariant under sufficient statistics
+      ({\v C}encov, 1982). Bray-Curtis was adopted by historical
+      convention, not derived from the multinomial model.
+
+      \medskip
+      \begin{minipage}[t]{0.44\linewidth}
+        For $\mathbf{p}$, $\mathbf{q}$ over $K$ taxa:
+        \[
+          D_{\mathrm{FR}} = 2\sqrt{K}\arccos\!\left(\sum_{k=1}^K \sqrt{p_k q_k}\right)
+        \]
+      \end{minipage}%
+      \hfill
+      \begin{minipage}[t]{0.52\linewidth}
+        \vspace{0.3ex}
+        \textbf{PERMANOVA} (9,999 permutations, phylum level):\\[0.5ex]
+        \begin{tabular}{llrr}\hline
+          & & \multicolumn{2}{c}{$p$-value} \\
+          Stream & Effect & FR & BC \\ \hline
+          Amplicon  & Treatment & 0.004** & 0.007** \\
+                    & Time      & \textbf{0.073.} & 0.190 \\[0.3ex]
+          MEGAHIT   & Treatment & 0.0001*** & 0.0004*** \\
+                    & Time      & 0.079. & 0.093. \\ \hline
+        \end{tabular}\\[0.5ex]
+        \textit{FR detects time effect ($p=0.073$) missed by BC.}
+      \end{minipage}
+
+    \end{posterblock}
+    \end{minipage}
+  };
+
+  \node[anchor=north west] at ($(TL)+(59cm,-82cm)$) {
+    \begin{minipage}{46.18cm}
+    \begin{posterblock}{Conclusions \& Future Directions}
+      Much reported shotgun-amplicon discordance reflects
+      \textsl{dry-lab pipeline differences}.\\%, not biology.
+      Routing shotgun reads through the amplicon pipeline
+      recovers concordant community profiles.
+
+      \medskip
+      Fisher-Rao distance, derived necessarily from the Fisher
+      Information Matrix of the multinomial distribution, provides
+      more stable community comparisons than Bray-Curtis.
+
+      \medskip
+      Further study of the sampling distribution of Fisher-Rao
+      distance will support power analysis and Type~I error
+      characterization for PERMANOVA-based testing.
+
+      \medskip
+      Validation against mock communities with known composition
+      will establish the accuracy of contig-based 16S extraction
+      across sequencing platforms.
+
+      \medskip
+      \begin{minipage}[t]{0.62\linewidth}
+        \raggedright
+        {\small
+        \textbf{Data:} P\'{e}rez-Losada et al.\ (2022),
+        \textit{Front.\ Microbiol.}\ 13:854423.
+        BioProject PRJNA777435.\\[0.4ex]
+        \textbf{Computing:} Pegasus HPC cluster,
+        GW Research Technology Services.\\[0.4ex]
+        \textbf{Theory:} \v{C}encov (1982), \textit{Statistical
+        Decision Rules and Optimal Inference};
+        Rao (1945).\\[0.4ex]
+        \textbf{Manuscript:} Claude (Anthropic).}
+      \end{minipage}%
+      \hfill
+      \begin{minipage}[t]{0.33\linewidth}
+        \centering
+        {\small\color{gray}\textbf{Poster \& Draft}}\\[0.3ex]
+        \includegraphics[width=4cm]{../figures/qrcode.pdf}\\[0.2ex]
+        {\tiny github.com/cgaylord/\\2026GWSPH\_ResearchDayPoster}
+      \end{minipage}
+    \end{posterblock}
+    \end{minipage}
+  };
+
+\end{tikzpicture}
+
+\end{frame}
+\end{document}
