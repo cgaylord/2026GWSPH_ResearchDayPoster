@@ -1,0 +1,122 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{helvet}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multicol}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{gwblue}{RGB}{0,59,92}
+\definecolor{gwbuff}{RGB}{168,153,104}
+
+% No page numbers
+\pagestyle{empty}
+
+\begin{document}
+
+%% ---- Header bar ----
+\noindent{\large\bfseries\color{gwblue}
+GWSPH Research Showcase \hfill Biostatistics \& Bioinformatics}
+
+\vspace{0.4em}
+\noindent\rule{\linewidth}{1.5pt}
+\vspace{0.2em}
+
+%% ---- Title ----
+\noindent{\large\bfseries
+Computational Pipeline Choice Drives Shotgun-Amplicon\\
+Discordance in Microbial Community Profiling}
+
+\vspace{0.8em}
+
+%% ---- Two-column body: abstract left, sidebar right ----
+\noindent
+\begin{minipage}[t]{0.67\linewidth}
+\raggedright
+
+\noindent\textbf{Background \& Significance:} Reported discordance between
+shotgun and amplicon microbiome profiling is often attributed to biological
+or technical wet-lab differences, but the contribution of computational
+pipelines remains underexplored. Pipeline choice is a potentially modifiable
+source of bias with direct implications for reproducibility in microbiome
+research.
+
+\medskip
+
+\noindent\textbf{Purpose:} We ask whether routing shotgun data through the
+amplicon computational pipeline recovers concordant community profiles, and
+whether Fisher-Rao distance provides more reliable comparisons than
+Bray-Curtis dissimilarity across pipeline streams.
+
+\medskip
+
+\noindent\textbf{Methods:} Using data from a published vermicomposting
+experiment across 12 microcosms in a $2{\times}2$ factorial design
+(earthworm presence $\times$ sampling time), we compared three analytical
+streams: native amplicon 16S sequencing, contig-based 16S extraction from
+shotgun assemblies, and shotgun reads processed through the amplicon DADA2
+pipeline. Community dissimilarities were computed using Fisher-Rao distance
+and Bray-Curtis dissimilarity, followed by PERMANOVA\@.
+
+\medskip
+
+\noindent\textbf{Findings \& Conclusions:} Contig-based profiles showed
+strong concordance with native amplicon results across all taxonomic levels,
+while read-based profiles diverged substantially. Fisher-Rao distance
+produced more consistent pairwise estimates with lower variance, yielding
+more reliable separation among pipeline streams than Bray-Curtis.
+These results suggest that much reported shotgun-amplicon discordance
+reflects dry-lab pipeline differences rather than biological signal.
+
+\medskip
+
+\noindent\textbf{Implications:} Future work will extend this framework to
+fungal analysis and validation against reference mock communities to assess
+implications for clinical and public health microbiome applications.
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.28\linewidth}
+\raggedright
+\setlength{\parskip}{0.6em}
+
+\noindent\textcolor{gwblue}{\rule{\linewidth}{1pt}}
+
+\noindent{\small\bfseries\color{gwblue} Primary Presenter}
+
+\noindent{\small Clark Gaylord}
+
+\noindent\textcolor{gwblue}{\rule{\linewidth}{0.5pt}}
+
+\noindent{\small\bfseries\color{gwblue} Co-Presenter(s)}
+
+\noindent{\small N/A}
+
+\noindent\textcolor{gwblue}{\rule{\linewidth}{0.5pt}}
+
+\noindent{\small\bfseries\color{gwblue} Status}
+
+\noindent{\small Doctoral}
+
+\noindent\textcolor{gwblue}{\rule{\linewidth}{0.5pt}}
+
+\noindent{\small\bfseries\color{gwblue} Authors}
+
+\noindent{\small Clark Gaylord\\
+Marcos P\'{e}rez-Losada\\
+Keith A.\ Crandall}
+
+\noindent\textcolor{gwblue}{\rule{\linewidth}{0.5pt}}
+
+\noindent{\small\bfseries\color{gwblue} Research Mentor /\\Department Chair}
+
+\noindent{\small Keith A.\ Crandall}
+
+\noindent\textcolor{gwblue}{\rule{\linewidth}{0.5pt}}
+
+\end{minipage}
+
+\end{document}
