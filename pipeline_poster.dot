@@ -1,0 +1,141 @@
+% cat pipeline_poster.dot
+digraph pipeline {
+    graph [
+        rankdir=LR
+        splines=polyline
+        nodesep=0.5
+        ranksep=1.2
+        fontname="Helvetica"
+        fontsize=28
+        bgcolor="transparent"
+        pad=0.4
+    ]
+
+    node [
+        fontname="Helvetica"
+        fontsize=24
+        style="filled,rounded"
+        shape=box
+        margin="0.25,0.15"
+        penwidth=2
+    ]
+
+    edge [
+        fontname="Helvetica"
+        fontsize=18
+        penwidth=2.5
+        arrowsize=1.2
+    ]
+
+    // ── Shared input ──────────────────────────────────────────
+    sample [
+        label="12 Samples\n(same wet lab)"
+        shape=ellipse
+        fillcolor="#E8F4F8"
+        color="#555555"
+        fontsize=26
+        fontname="Helvetica-Bold"
+    ]
+
+    // ── Stream 1: Native Amplicon ─────────────────────────────
+    subgraph cluster_s1 {
+        label="Stream 1: Native Amplicon"
+        fontname="Helvetica-Bold"
+        fontsize=26
+        fontcolor="#466E96"
+        style="rounded,dashed"
+        color="#466E96"
+        fillcolor="#EEF4FA"
+        bgcolor="#EEF4FA"
+
+        pcr    [label="PCR\n16S V4"        fillcolor="#C8DCF0" color="#466E96"]
+        aseq   [label="Illumina\nSequencing" fillcolor="#C8DCF0" color="#466E96"]
+        adada  [label="DADA2\n(paired-end)" fillcolor="#A8C8E8" color="#466E96"]
+        asv1   [label="ASV Table\nStream 1"  fillcolor="#7AAED4" color="#466E96" fontname="Helvetica-Bold"]
+    }
+
+    // ── Stream 3: Read-Based ──────────────────────────────────
+    subgraph cluster_s3 {
+        label="Stream 3: Read-Based"
+        fontname="Helvetica-Bold"
+        fontsize=26
+        fontcolor="#3C8C5C"
+        style="rounded,dashed"
+        color="#3C8C5C"
+        fillcolor="#EEF8F2"
+
+        sseq   [label="Shotgun\nSequencing"   fillcolor="#C0E8CC" color="#3C8C5C"]
+        rdex   [label="16S Read\nExtraction"  fillcolor="#C0E8CC" color="#3C8C5C"]
+        rdda   [label="DADA2\n(single-end)"   fillcolor="#98D8A8" color="#3C8C5C"]
+        asv3   [label="ASV Table\nStream 3"   fillcolor="#70C880" color="#3C8C5C" fontname="Helvetica-Bold"]
+    }
+
+    // ── Stream 2: MEGAHIT Contigs ─────────────────────────────
+    subgraph cluster_s2 {
+        label="Stream 2: MEGAHIT Contigs"
+        fontname="Helvetica-Bold"
+        fontsize=26
+        fontcolor="#8C5A9C"
+        style="rounded,dashed"
+        color="#8C5A9C"
+        fillcolor="#F6EEF8"
+
+        mh     [label="MEGAHIT\nAssembly"     fillcolor="#E0C8EC" color="#8C5A9C"]
+        brn    [label="Barrnap\n16S Extract"  fillcolor="#E0C8EC" color="#8C5A9C"]
+        abm    [label="BBMap\nAbundance"      fillcolor="#D0A8E0" color="#8C5A9C"]
+        cdda   [label="DADA2\n(selfConsist)"  fillcolor="#C090D4" color="#8C5A9C"]
+        asv2   [label="ASV Table\nStream 2"   fillcolor="#A870C0" color="#8C5A9C" fontname="Helvetica-Bold"]
+    }
+
+    // ── Analysis ──────────────────────────────────────────────
+    dist [
+        label="Fisher-Rao &\nBray-Curtis\nDistances"
+        fillcolor="#F5E8C0"
+        color="#A08020"
+        fontname="Helvetica-Bold"
+        fontsize=24
+    ]
+    perm [
+        label="PERMANOVA\n& PCoA"
+        fillcolor="#F5E8C0"
+        color="#A08020"
+        fontname="Helvetica-Bold"
+        fontsize=24
+    ]
+
+    // ── Edges: Stream 1 ───────────────────────────────────────
+    sample -> pcr   [color="#466E96"]
+    pcr    -> aseq  [color="#466E96"]
+    aseq   -> adada [color="#466E96"]
+    adada  -> asv1  [color="#466E96"]
+
+    // ── Edges: Stream 3 ───────────────────────────────────────
+    sample -> sseq  [color="#3C8C5C"]
+    sseq   -> rdex  [color="#3C8C5C"]
+    rdex   -> rdda  [color="#3C8C5C"]
+    rdda   -> asv3  [color="#3C8C5C"]
+
+    // ── Edges: Stream 2 ───────────────────────────────────────
+    sample -> mh    [color="#8C5A9C"]
+    mh     -> brn   [color="#8C5A9C"]
+    brn    -> abm   [color="#8C5A9C"]
+    abm    -> cdda  [color="#8C5A9C"]
+    cdda   -> asv2  [color="#8C5A9C"]
+
+    // ── BBMap back-edge: shotgun reads → abundance recovery ───
+    sseq -> abm [
+        color="#8C5A9C"
+        style=dashed
+        xlabel="reads"
+        fontcolor="#8C5A9C"
+        fontsize=20
+        constraint=false
+    ]
+
+    // ── Edges: to analysis ────────────────────────────────────
+    asv1 -> dist [color="#003A70" penwidth=2]
+    asv3 -> dist [color="#003A70" penwidth=2]
+    asv2 -> dist [color="#003A70" penwidth=2]
+    dist -> perm [color="#003A70" penwidth=2.5]
+}
+
